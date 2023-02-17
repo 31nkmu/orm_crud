@@ -18,9 +18,6 @@ class RetrieveMixin:
             instance = list(session.scalars(stmt))[0]
             serializer = self.serializer_class()
             data = serializer.serialize(instance)
-            # with Session(engine) as session:
-            #     instance = session.query(self.model).get()
-
             return data
 
 
@@ -36,12 +33,9 @@ class UpdateMixin:
             serializer = self.serializer_class()
             serializer.update_fields(data)
             data = serializer.validate(data)
+            check_data = {'id': id_, 'user_id': data.get('user_id')}
+            serializer.check_is_owner(check_data)
             serializer.perform_update(id_=id_, data=data)
-            # stmt = update(self.model).where(self.model.id == id_).values(**data)
-            # with engine.begin() as conn:
-            #     conn.execute(
-            #         stmt, [data],
-            #     )
             return data
 
 
@@ -51,6 +45,8 @@ class DestroyMixin:
     """
 
     def destroy(self, request: dict, *args, **kwargs):
+        serializer = self.serializer_class()
+        serializer.check_is_owner(request)
         with Session(engine) as session:
             instance = session.get(self.model, request.get('id'))
             session.delete(instance)
@@ -87,33 +83,3 @@ class CreateMixin:
             session.add(data)
             session.commit()
             return serializer.serialize(data)
-
-# retrieve = RetrieveMixin()
-# up = UpdateMixin()
-# list_ = ListMixin()
-# create = CreateMixin()
-# des = DestroyMixin()
-
-# ret = retrieve.retrieve({'id': 1})
-
-# upd = up.update({
-#     'id': 1,
-#     'data': {
-#         'title': 'update_title',
-#         'price': 123123123,
-#         'category_id': 1
-#     }
-# })
-# lst = list_.list()
-# cre = create.create({'data': {
-#     'title': 'test_prod_2',
-#     'price': 4444,
-#     'category_id': 1,
-#     'user_id': 1
-# }})
-# des.destroy({'id': 6})
-
-# print(ret)
-# print(upd)
-# print(lst)
-# print(cre)

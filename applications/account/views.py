@@ -1,4 +1,4 @@
-from applications.account.serializers import UserSerializer, ForgotPasswordSerializer
+from applications.account.serializers import UserSerializer, ForgotPasswordSerializer, LoginSerializer
 from config.generics import ListCreateView, RetrieveView
 from config.mixins import UpdateMixin
 from config.models import User
@@ -9,28 +9,17 @@ class UserView(ListCreateView, RetrieveView):
     serializer_class = UserSerializer
 
 
-# a = UserView()
-# ret = a.retrieve({'id': 1})
-# a.create({
-#     'data': {
-#         'email': 'admin@ad.com',
-#         'password': '1234',
-#         'password2': '1234',
-#     }
-# })
-# print(a.list())
+class LoginView(RetrieveView):
+    model = User
+    serializer_class = LoginSerializer
+
+    def get(self, request, *args, **kwargs):
+        data = request.get('data')
+        serializer = self.serializer_class()
+        data = serializer.validate(data)
+        return data
 
 
 class ForgotPasswordView(UpdateMixin):
     model = User
     serializer_class = ForgotPasswordSerializer
-
-#
-# a = ForgotPasswordView()
-# a.update({
-#     'data': {
-#         'email': 'admin@.com',
-#         'password': '1',
-#         'password2': '1'
-#     }
-# })

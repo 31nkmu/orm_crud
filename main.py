@@ -1,28 +1,33 @@
-from applications.account.views import UserView
+import config.services as services
 
-user = UserView()
+user_obj = services.Account()
+category_obj = services.Category()
+product_obj = services.Product()
 
 
 def main():
     while True:
-        print('Выбери один из вариантов. Введи число')
+        print('Привет 👋\nВыбери один из вариантов (введи число)')
         try:
+            # меню
             choice = int(input('1: войти в аккаунт\n2: зарегистрироваться\nТвой выбор: '))
             if choice not in [1, 2]:
                 raise AttributeError()
             if choice == 1:
-                email = input('Введи свой email')
-                password = input('Введи свой пароль')
-                data = {
-                    'data'
-                }
-                user.get()
+                user = user_obj.get_user()
+            elif choice == 2:
+                user = user_obj.register()
 
+            # категории
+            category_obj.get_or_create_category()
+
+            # продукты
+            services.product_cycle(user)
 
         except ValueError:
-            print('!!!!!!!!!!!!!Нужно ввести только чило')
+            print('\n!!!!!!!!!!!!!Нужно ввести только чило\n')
         except AttributeError:
-            print('!!!!!!!!!!!!!Нет такого варианта')
+            print('\n!!!!!!!!!!!!!Нет такого варианта\n')
 
 
 if __name__ == '__main__':

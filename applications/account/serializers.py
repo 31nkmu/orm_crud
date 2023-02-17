@@ -7,6 +7,7 @@ from config.settings import engine
 
 
 class UserSerializer(ModelSerializer):
+    model = User
     fields = {
         'create': ['email', 'password', 'password2'],
         'update': ['email', 'password']
@@ -15,6 +16,7 @@ class UserSerializer(ModelSerializer):
     def serialize(*args, **kwargs):
         instance = args[-1]
         data = {
+            'id': instance.id,
             'email': instance.email,
             'username': instance.username,
             'password': instance.password,
@@ -38,6 +40,7 @@ class UserSerializer(ModelSerializer):
 
 
 class ForgotPasswordSerializer(ModelSerializer):
+    model = User
     fields = {
         'update': ['password', 'email', 'password2']
     }
@@ -45,6 +48,7 @@ class ForgotPasswordSerializer(ModelSerializer):
     def serialize(self, *args, **kwargs):
         instance = args[-1]
         data = {
+            'id': instance.id,
             'email': instance.email,
             'password': instance.password,
         }
@@ -75,3 +79,30 @@ class ForgotPasswordSerializer(ModelSerializer):
             conn.execute(
                 stmt, [data],
             )
+
+
+class LoginSerializer(ModelSerializer):
+    model = User
+
+    def serialize(*args, **kwargs):
+        instance = args[-1]
+        data = {
+            'id': instance.id,
+            'email': instance.email,
+            'username': instance.username,
+            'password': instance.password,
+        }
+        return data
+
+    def validate(self, *args, **kwargs):
+        instance = args[-1]
+        email = instance.get('email')
+        if email.split('.')[-1] not in ['com', 'ru'] or email.count('@') != 1:
+            raise Exception('Неправильно введен email')
+        with Session(engine) as session:
+            user = session.query(User).filter(User.email == instance['email'],
+                                              User.password == instance['password']).first()
+            if not user:
+                raise Exception('Такого юзера не существует')
+            instance['id'] = user.id
+            return instance
