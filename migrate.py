@@ -1,10 +1,9 @@
-from settings import engine, Base
-import crud.models
+from config.settings import engine, Base
+import config.models
 
 
 def main():
-    if not Base.metadata.tables.keys():
-        Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
 
 
 if __name__ == '__main__':
