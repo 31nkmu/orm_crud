@@ -65,7 +65,7 @@ class Category:
                     })
                     for dict_ in category_list:
                         print(f"{dict_['id']}: {dict_['title']}")
-                    print('\nКатегория успешно добавлен 🥳\n')
+                    print('\nКатегория успешно добавлена 🥳\n')
                 elif choice in ['нет', 'no']:
                     return
             except AttributeError:
@@ -88,6 +88,7 @@ class Product:
                 print('\n!!!!!!!!!!!!!Нужно ввести только чило\n')
             except IndexError:
                 print('\n!!!!!!!!!!!!!Нет такого продукта\n')
+                break
             except Exception as ex_:
                 print(f'\n{ex_}\n')
 
@@ -189,11 +190,15 @@ def product_cycle(user):
             if choice == 1:
                 pprint(product_obj.post(user=user))
             elif choice == 2:
-                print(product_obj.update(user=user))
+                product = product_obj.update(user=user)
+                if product:
+                    print(product)
             elif choice == 3:
                 pprint(product_obj.list())
             elif choice == 4:
-                pprint(product_obj.get())
+                product = product_obj.get()
+                if product:
+                    pprint(product)
             elif choice == 5:
                 product_obj.delete(user=user)
             elif choice == 6:
