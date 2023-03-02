@@ -187,24 +187,25 @@ def product_cycle(user):
             ))
             if choice not in range(1, 8):
                 raise AttributeError()
-            if choice == 1:
-                pprint(product_obj.post(user=user))
-            elif choice == 2:
-                product = product_obj.update(user=user)
-                if product:
-                    print(product)
-            elif choice == 3:
-                pprint(product_obj.list())
-            elif choice == 4:
-                product = product_obj.get()
-                if product:
-                    pprint(product)
-            elif choice == 5:
-                product_obj.delete(user=user)
-            elif choice == 6:
-                category_obj.get_or_create_category()
-            elif choice == 7:
-                break
+            match choice:
+                case 1:
+                    pprint(product_obj.post(user=user))
+                case 2:
+                    product = product_obj.update(user=user)
+                    if product:
+                        print(product)
+                case 3:
+                    pprint(product_obj.list())
+                case 4:
+                    product = product_obj.get()
+                    if product:
+                        pprint(product)
+                case 5:
+                    product_obj.delete(user=user)
+                case 6:
+                    category_obj.get_or_create_category()
+                case 7:
+                    break
 
         except ValueError:
             print('\n!!!!!!!!!!!!!Нужно ввести только чило\n')
